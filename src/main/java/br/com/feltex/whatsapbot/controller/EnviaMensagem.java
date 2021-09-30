@@ -6,8 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,29 +17,22 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class EnviaMensagem {
 
-    private final WebDriver webDriver;
-
-    public EnviaMensagem(WebDriver webDriver) {
-        this.webDriver = webDriver;
-    }
+    @Autowired
+    private WebDriver webDriver;
 
     @PostMapping
-    public ResponseEntity receberMensagem(@RequestBody Mensagem mensagem) {
-        mensagem.getContatos().forEach(contato -> enviarMensagem(contato, mensagem.getConteudo()));
-        return new ResponseEntity<>("Envio de mensagens concluído!", HttpStatus.OK);
-    }
+    public void receberMensagem(@RequestBody Mensagem mensagem) {
+        for (String contato : mensagem.getContatos()) {
+            try {
+                var elementoContato = findContato(contato);
+                elementoContato.click();
 
-    private void enviarMensagem(String contato, String conteudo) {
-        try {
-            var elementoContato = findContato(contato);
-            elementoContato.click();
-
-            var caixaMensagem = findCaixaTexto();
-            caixaMensagem.sendKeys(conteudo);
-            caixaMensagem.sendKeys(Keys.RETURN);
-
-        } catch (Exception e) {
-            log.error("Não foi possível enviar a mensagem para o contato {}", contato, e);
+                var caixaMensagem = findCaixaTexto();
+                caixaMensagem.sendKeys(mensagem.getConteudo());
+                caixaMensagem.sendKeys(Keys.RETURN);
+            } catch (Exception e) {
+                log.error("Não foi possível enviar a mensagem para o contato {}", contato, e);
+            }
         }
     }
 
