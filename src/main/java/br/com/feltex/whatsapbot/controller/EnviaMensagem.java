@@ -32,8 +32,8 @@ public class EnviaMensagem {
 
     private void enviarMensagem(String contato, String conteudo) {
         try {
-            var elmentoContato = findContato(contato);
-            elmentoContato.click();
+            var elementoContato = findContato(contato);
+            elementoContato.click();
 
             var caixaMensagem = findCaixaTexto();
             caixaMensagem.sendKeys(conteudo);

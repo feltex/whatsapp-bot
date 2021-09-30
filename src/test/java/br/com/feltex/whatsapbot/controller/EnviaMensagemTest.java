@@ -17,7 +17,10 @@ class EnviaMensagemTest {
 
     @Test
     void enviarMensagem() throws Exception {
-        var mensagem = new Mensagem(Set.of("Dad"), "Este robô envia mensagens automatica para o ZAP ZAP");
+        var mensagem = new Mensagem();
+        mensagem.setContatos(Set.of("Dad"));
+        mensagem.setConteudo("Este robô envia mensagens automatica para o ZAP ZAP");
+
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> httpRequest = new HttpEntity<>(objectMapper.writeValueAsString(mensagem), httpHeaders);
